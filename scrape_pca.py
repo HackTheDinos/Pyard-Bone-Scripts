@@ -1,5 +1,5 @@
 '''
-    * Pull these items for transaction
+* Pull these items 
       "geometry_voxel_y"
       "geometry_voxel_x"
       "xray_voltage"
@@ -9,7 +9,6 @@
       "calib_num_image"
       "calib_skip"
 
-    return dict?
 '''
 
 import configparser

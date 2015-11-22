@@ -21,6 +21,6 @@ TODO
 
 [] add PCA data extraction to clean_file
 [] STL upload script
-[]  
+[] catdoc @nharsch  
 
 
