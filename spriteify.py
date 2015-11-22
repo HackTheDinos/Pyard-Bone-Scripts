@@ -35,7 +35,10 @@ def clean_tiff(path, tiff):
         new_tiff = None
         gc.collect()
         return new_tiff
-
+    except TypeError:
+        new_tiff = None
+        gc.collect()
+        return new_tiff
     new_png_name = new_name(tiff)
     new_png_path = os.path.join(path, new_png_name)
     call(['convert', new_tiff_path, '--type', 'Grayscale',  new_png_path])
