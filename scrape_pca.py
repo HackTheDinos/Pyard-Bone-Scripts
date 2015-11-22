@@ -26,7 +26,9 @@ def get_pca_dict(pca_path):
         "ct_number_images": cp.get('CT','NumberImages'),
         "calib_averaging": cp.get('CalibValue', 'Averaging'),
         "calib_num_image": cp.get('CalibValue', 'NumberImages'),
-        "calib_skip": cp.get('CalibValue', 'Skip')
+        "calib_skip": cp.get('CalibValue', 'Skip'),
+        "detector_timing_value": cp.get('Detector', 'TimingVal'),
+
     }
     return pca_dict
 
