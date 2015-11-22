@@ -98,7 +98,7 @@ def find_tiff_stacks(root_dir):
             print('current dir {} is a tiff stack'.format(dir_path))
             file_list = [os.path.join(dir_path, file) \
                          for file in filenames] 
-            tiff_stacks[os.path.basename(dir_path)] = file_list 
+            tiff_stacks[os.path.basename(dir_path)] = {'images':file_list}
     return tiff_stacks
 
 if __name__ == '__main__':

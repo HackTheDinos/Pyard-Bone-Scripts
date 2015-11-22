@@ -3,6 +3,7 @@ import os
 import requests
 
 from scrape_pca import get_pca_dict
+from clean_data import find_tiff_stacks
 import extract_doc
 
 ENDPOINT = 'http://boneyard.io/api/specimens'
@@ -36,13 +37,17 @@ def get_all_metadata(root_dir):
     all_data = {'institutional_id':id}
     pca_file = find_first_ext_match('.pca', root_dir)
     pca_data = get_pca_dict(pca_file)
-
+    # parse PCA
     if pca_data:
         all_data.update(pca_data)
-
+    # parse docs
     xdoc = extract_doc.walk(root_dir)
     if xdoc:
         all_data.update(xdoc)
+
+    # get tiff stack urls
+    tiff_locs = find_tiff_stacks(root_dir)   
+    all_data.update({'scans':tiff_locs})
 
     resp = requests.post(ENDPOINT, data=all_data)
     return all_data
