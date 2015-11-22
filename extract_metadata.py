@@ -5,7 +5,7 @@ from scrape_pca import get_pca_dict
 
 #TODO
 # walk and find ID and PCA
-def find_first_ext_match(ext, path):
+def find_first_ext_match(ext, root_dir):
     '''
     find first PCA we come across
     '''
