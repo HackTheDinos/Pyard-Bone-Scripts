@@ -4,6 +4,7 @@ import requests
 
 from scrape_pca import get_pca_dict
 from clean_data import find_tiff_stacks
+from sketchfab_upload import upload_all_STLs
 import extract_doc
 
 ENDPOINT = 'http://boneyard.io/api/specimens'
@@ -48,6 +49,11 @@ def get_all_metadata(root_dir):
     # get tiff stack urls
     tiff_locs = find_tiff_stacks(root_dir)   
     all_data.update({'scans':tiff_locs})
+
+    # get the STL proxies
+    proxy = upload_all_STLs(root_dir)
+    if proxy is not None:
+        all_data.update({'preview_uri':proxy})
 
     resp = requests.post(ENDPOINT, data=all_data)
     return all_data

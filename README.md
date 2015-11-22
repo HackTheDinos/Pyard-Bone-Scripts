@@ -13,15 +13,16 @@ data.
 Dependencies:
 
 * catdoc
-* ffmpeg
 * imagemagick
+* requests
 * meshlab server
 * python-3.X
 
 TODO
 
-- [] STL upload script
+- [] STL upload script @nharsh
   - [] find out why polling requests on sketchfab_upload doesn't update
+  - [] upload and dump link info to json to be picked up on metadata script
 
 - [x] catdoc 
  

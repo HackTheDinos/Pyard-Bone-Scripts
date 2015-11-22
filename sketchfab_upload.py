@@ -1,6 +1,8 @@
 import requests
 import os
 import time
+# import mechanize
+import random
 
 #TODO: config file?
 
@@ -18,24 +20,31 @@ class STL_Uploader:
             "model_file_name":self.name,
         }
         self.file = {'model_file':open(model_path, 'rb')}
+        # self.br = mechanize.Browser()
+        self.status_url = None
         self.post()
+        
+        
 
 
     def post(self):
-        self.post_response = requests.post(self.post_endpoint, 
-                          data=self.post_payload, 
-                          files=self.file)
-        if self.post_response.ok:
-            self.uid = self.post_response.json().get('uid')
+        if not self.status_url:
+            self.post_response = requests.post(self.post_endpoint, 
+                              data=self.post_payload, 
+                              files=self.file)
+            if self.post_response.ok:
+                self.uid = self.post_response.json().get('uid')
 
     def get_status(self):
-        self.status_url = 'https://api.sketchfab.com/v2/models/{}/status?'\
-                .format(self.uid)
-        res = requests.get(self.status_url, headers={'User-Agent': 'firefox'})
+        self.status_url = 'https://api.sketchfab.com/v2/models/{}/status?cache={}'\
+                .format(self.uid, random.randint(0,100))
+        print("pinging {}".format(self.status_url))
+        s = requests.session()
+        res = s.get(self.status_url) #, headers={'User-Agent': 'chrome'})
         print(res.text)
         return res.json()['processing']
 
-    def wait_for_upload(self):
+    def wait_for_upload(self, wait=5):
         '''
         will wait until sucess or failure
         will update sucess url
@@ -45,38 +54,27 @@ class STL_Uploader:
             status = self.get_status()
             print('your status is',status)
             if status in ('PROCESSING','PENDING'):
-                print("status: {}, call back in 20 seconds. \
-                      check here: {}".format(status, self.status_url))
-                time.sleep(20)
+                print("status: {}, call back in {} seconds. \
+                      check here: {}".format(status, wait, self.status_url))
+                time.sleep(wait)
             elif status == 'SUCCEEDED':
-                self.success_url = "https://sketchfab.com/models/{}/".format(uid)
+                self.success_url = "https://sketchfab.com/models/{}/embed".format(self.uid)
                 self.succesful = True
-                print("woohoo!, it worked, go to {}".format(url))
-                return self.url 
+                return self.success_url 
             else: #None or FAILED
                 self.succesful = False
                 return None
 
+def upload_all_STLs(root_dir):
+    for dir_path, dir_names, filenames in os.walk(root_dir):
+        for filename in filenames:
+            if os.path.splitext(filename)[1] == '.stl':
+                uploader = STL_Uploader(os.path.join(dir_path, filename))
+                uploader.post()
+                stl_proxy = uploader.wait_for_upload()
+                break
+    return stl_proxy
 
-# then the get requests to check on it
-
-# success_url = 'https://sketchfab.com/models/{}'.format(uid)
-
-# waiting = True
-# while waiting:
-#     poll_response = requests.get(poll_url, params=token)
-#     status = poll_response.json().get('processing')
-#     print status
-#     if status in ('PROCESSING','PENDING'):
-#         print "status: {}, call back in 30 seconds".format(status)
-#         time.sleep(30)
-#     elif status == 'SUCCEEDED':
-#         url = "https://api.sketchfab.com/v2/models/{}/".format(uid)
-#         print "yeah, it worked, go to {}".format(url)
-#         break
-#     else: #None or FAILED
-#         break
-#
 if __name__ == "__main__":
     from sys import argv
     if len(argv) > 1:
@@ -86,7 +84,8 @@ if __name__ == "__main__":
     uploader = STL_Uploader(model_path)
     url = uploader.wait_for_upload()
     if url:
-        print('{"stl_proxy_url":{}}'.format(url))
+        resp_dict = {'stl_proxy_url':url}
+        print(resp_dict)
     else:
         print('sorry, something went wrong')
 
