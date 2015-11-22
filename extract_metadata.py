@@ -29,6 +29,7 @@ def get_all_metadata(root_dir):
     tries to scrape metadata from:
         * PCA file
         * ID.txt
+    posts metadata to endpoint
     '''
     id_file = find_filename('id.txt', root_dir)
     if id_file:

@@ -21,10 +21,9 @@ class STL_Uploader:
         }
         self.file = {'model_file':open(model_path, 'rb')}
         # self.br = mechanize.Browser()
+        self.uid = None
         self.status_url = None
         self.post()
-        
-        
 
 
     def post(self):
@@ -36,13 +35,16 @@ class STL_Uploader:
                 self.uid = self.post_response.json().get('uid')
 
     def get_status(self):
-        self.status_url = 'https://api.sketchfab.com/v2/models/{}/status?cache={}'\
-                .format(self.uid, random.randint(0,100))
-        print("pinging {}".format(self.status_url))
-        s = requests.session()
-        res = s.get(self.status_url) #, headers={'User-Agent': 'chrome'})
-        print(res.text)
-        return res.json()['processing']
+        if not self.uid:
+            self.post()
+        else:
+            self.status_url = 'https://api.sketchfab.com/v2/models/{}/status?cache={}'\
+                    .format(self.uid, random.randint(0,100))
+            print("pinging {}".format(self.status_url))
+            s = requests.session()
+            res = s.get(self.status_url) #, headers={'User-Agent': 'chrome'})
+            print(res.text)
+            return res.json()['processing']
 
     def wait_for_upload(self, wait=5):
         '''
