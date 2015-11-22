@@ -19,6 +19,11 @@ def is_eligable_file(f):
     f = f.lower()
     return f.endswith('tif') or f.endswith('tiff') or f.endswith('stl') or f.endswith('pca')
 
+def is_tiff_stack(path):
+    files = [file for file in os.listdir(path)]
+    exts = [os.path.splitext(f)[1] for f in files]
+    return all([ext.lower()=='.tiff' or ext.lower()=='.tif' for ext in exts])
+
 def status(root, **kwargs):
     filepath = os.path.join(root, 'status.txt')
     with open(filepath, 'w') as f:
@@ -26,7 +31,6 @@ def status(root, **kwargs):
 
 def walk_and_clean(walking_root):
     '''returns dict of relevant media paths'''
-    file_locs = {} # 'stackname' : [filepaths]
     ROOT = str(uuid4())
     files_written = 0
     new_root = os.path.join(walking_root, ROOT)
@@ -59,22 +63,18 @@ def walk_and_clean(walking_root):
             curr_dir = 'extra_data'
         else:
             curr_dir = os.path.dirname(dir_path).split('/')[-1]
-            # init empty list for curr tiff dir
+
 
         new_path = os.path.join(specimen_path, curr_dir)
         existing_path =  make_unless_exists(new_path)
-        
+
         if not existing_path:
             new_path = os.path.join(specimen_path, str(uuid4()) + curr_dir)
             make_unless_exists(new_path)
 
-        # add dir to dict
-        file_locs[new_path] = []
-
         for files in movable_files:
             old_files_path = os.path.join(dir_path, files)
             new_files_path = os.path.join(new_path, files)
-            file_locs[new_path].append(files)
             copy2(old_files_path, new_files_path)
             files_written += 1
             status(new_root,
@@ -88,11 +88,20 @@ def walk_and_clean(walking_root):
         state='finished',
         files_written=files_written
     )
-    return file_locs
 
-
+def find_tiff_stacks(root_dir):
+    tiff_stacks = {}
+    for dir_path, dir_names, filenames in os.walk(root_dir):
+        print(dir_path)
+        if is_tiff_stack(dir_path):
+            print('current dir {} is a tiff stack'.format(dir_path))
+            file_list = [os.path.join(dir_path, file) \
+                         for file in filenames] 
+            tiff_stacks[os.path.basename(dir_path)] = file_list 
+    return tiff_stacks
 
 if __name__ == '__main__':
     _, root = argv
-    print(walk_and_clean(root))
+    walk_and_clean(root)
+    print(find_tiff_stacks(root))
 
