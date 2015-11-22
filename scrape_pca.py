@@ -10,14 +10,9 @@
       "calib_skip"
 
     return dict?
-
-{}
-
 '''
 
 import configparser
-
-
 
 def get_pca_dict(pca_path):
     cp = configparser.ConfigParser()
