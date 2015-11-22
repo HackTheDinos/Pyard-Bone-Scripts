@@ -1,10 +1,12 @@
-
 import os
+
+import requests
+
 from scrape_pca import get_pca_dict
 import extract_doc
 
+ENDPOINT = 'http://localhost:3000/api/specimens'
 
-#TODO
 # walk and find ID and PCA
 def find_first_ext_match(ext, root_dir):
     '''
@@ -26,7 +28,6 @@ def get_all_metadata(root_dir):
         * PCA file
         * ID.txt
     '''
-    # TODO: move this to it's own file?
     id_file = find_filename('id.txt', root_dir)
     if id_file:
         id= open(id_file).read().strip()
@@ -35,6 +36,7 @@ def get_all_metadata(root_dir):
     all_data = {'institutional_id':id}
     pca_file = find_first_ext_match('.pca', root_dir)
     pca_data = get_pca_dict(pca_file) 
+
     if pca_data:
         all_data.update(pca_data)
 
@@ -42,6 +44,7 @@ def get_all_metadata(root_dir):
     if xdoc:
         all_data.update(xdoc)
 
+    resp = requests.post(ENDPOINT, data=pca_data)
     return all_data
 
 if __name__ == "__main__":

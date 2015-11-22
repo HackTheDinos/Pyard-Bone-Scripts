@@ -1,5 +1,5 @@
 '''
-* Pull these items 
+* Pull these items
       "geometry_voxel_y"
       "geometry_voxel_x"
       "xray_voltage"
@@ -15,6 +15,9 @@ import configparser
 
 def get_pca_dict(pca_path):
     cp = configparser.ConfigParser()
+    if not pca_path:
+        return {}
+
     cp.read(pca_path)
 
     pca_dict = {
@@ -32,7 +35,7 @@ def get_pca_dict(pca_path):
     return pca_dict
 
 if __name__ == '__main__':
-     from sys import argv  
+     from sys import argv
      _, pca_path = argv
      print(get_pca_dict(pca_path))
 
