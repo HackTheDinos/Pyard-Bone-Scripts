@@ -5,7 +5,7 @@ import requests
 from scrape_pca import get_pca_dict
 import extract_doc
 
-ENDPOINT = 'http://localhost:3000/api/specimens'
+ENDPOINT = 'http://boneyard.io/api/specimens'
 
 # walk and find ID and PCA
 def find_first_ext_match(ext, root_dir):
