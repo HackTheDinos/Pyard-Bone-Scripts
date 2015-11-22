@@ -1,6 +1,7 @@
 
 import os
 from scrape_pca import get_pca_dict
+import extract_doc
 
 
 #TODO
@@ -36,6 +37,11 @@ def get_all_metadata(root_dir):
     pca_data = get_pca_dict(pca_file) 
     if pca_data:
         all_data.update(pca_data)
+
+    xdoc = extract_doc.walk(root_dir)
+    if xdoc:
+        all_data.update(xdoc)
+
     return all_data
 
 if __name__ == "__main__":
