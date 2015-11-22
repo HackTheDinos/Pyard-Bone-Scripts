@@ -4,6 +4,9 @@ from uuid import uuid4
 from shutil import copy2
 from sys import argv
 
+# takes argument of the root dir of the data:
+# IE: python clean_data.py /Users/deansilfen/HTD/CTdata_copy
+# takes around 10 seconds to run on ~15GB of data
 
 def make_unless_exists(path):
     if not os.path.exists(path):
