@@ -1,26 +1,45 @@
 import sys,os
 #import piexif
 #from PIL import Image
+import os
+from math import ceil
+from sys import argv
 from uuid import uuid4
+
 import piexif
 from PIL import Image
 
-# walk through each directory of files,
-# if there are more than 50 files,
-# find out how many files should
+MAX_FILE_COUNT = 50
 
+### PROCESSING THE DATA
 def new_name(old_name):
     old_name = old_name.split('.')[0]
-    return  + old_name + '.png'
+### GETTING THE DATA
+def process_files(dir_path, filenames):
+    total_files = len(filenames)
+    if total_files <= MAX_FILE_COUNT:
+        return filenames
 
-def clean_tiff(tiff):
-   # exif_dict = piexif.load(tiff)
+    step = ceil(total_files / MAX_FILE_COUNT)
+    chosen_files = filenames[::step]
+    for filename in chosen_files:
+        shrink_tiff(dir_path, filename)
+    return chosen_files
 
-    #if exif_dict.get('0th'):
-     #   exif_dict['ImageDescription'] = 'This is not null'
-      #  new_tiff = Image.open(tiff)
-       # tiff = 'temp.tiff'
-        #new_tiff.save(tiff, exif=e)
+def walk_tiffs(root):
+    walkable = os.walk(root)
+    for dir_path, dir_names, filenames in walkable:
+        tiff_files = [
+            filename for filename in filenames if filename.lower().endswith('tif') or filename.lower().endswith('tiff')
+        ]
+        if not tiff_files:
+            continue
 
-    call('convert {0} -resize 640x480 -gravity center -background white -extent 640x480 {1}'.format(tiff, new_name(tiff)))
+        files = process_files(dir_path, tiff_files)
+        print(files)
+
+
+if __name__ == '__main__':
+    _, root = argv
+    walk_tiffs(root)
 
