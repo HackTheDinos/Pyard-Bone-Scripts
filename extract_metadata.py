@@ -25,12 +25,13 @@ def get_all_metadata(root_dir):
         * PCA file
         * ID.txt
     '''
+    # TODO: move this to it's own file?
     id_file = find_filename('id.txt', root_dir)
     if id_file:
         id= open(id_file).read().strip()
     else:
         id= 'None found'
-    all_data = {'specemin_id':id}
+    all_data = {'institutional_id':id}
     pca_file = find_first_ext_match('.pca', root_dir)
     pca_data = get_pca_dict(pca_file) 
     if pca_data:
