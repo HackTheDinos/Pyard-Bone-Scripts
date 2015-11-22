@@ -1,5 +1,8 @@
 import os
+import gc
+
 from math import ceil
+from subprocess import call
 from sys import argv
 from uuid import uuid4
 
@@ -15,6 +18,7 @@ def new_name(old_name):
 
 def clean_tiff(path, tiff):
     new_tiff_path = os.path.join(path, tiff)
+
     try:
         exif_dict = piexif.load(new_tiff_path)
         if not exif_dict.get('ImageDescription'):
@@ -24,11 +28,17 @@ def clean_tiff(path, tiff):
         exif_dict = {} # TODO: generate exif data? I guess?
         return
 
-    new_tiff = Image.open(new_tiff_path)
-    new_tiff.save(new_tiff_path, exif=exif_dict)
+    try:
+        new_tiff = Image.open(new_tiff_path)
+        new_tiff.save(new_tiff_path, exif=exif_dict)
+    except ValueError:
+        new_tiff = None
+        gc.collect()
+        return new_tiff
+
     new_png_name = new_name(tiff)
     new_png_path = os.path.join(path, new_png_name)
-    call('convert {0} --type Grayscale {1}'.format(new_tiff_path, new_png_path))
+    call(['convert', new_tiff_path, '--type', 'Grayscale',  new_png_path])
     return new_png_path
 
 ### GETTING THE DATA
@@ -44,12 +54,12 @@ def process_files(dir_path, filenames):
         test_img = Image.open(test_path)
     except IndexError:
         return False
-
     width = test_img.width * len(chosen_files)
     height = test_img.height
     blank_image = Image.new("RGB", (width, height))
     paste_cords = (0, 0) # X, Y
 
+    processed_files = 0
     for filename in chosen_files:
         png_path = clean_tiff(dir_path, filename)
         if not png_path:
@@ -58,14 +68,20 @@ def process_files(dir_path, filenames):
         blank_image.paste(png, paste_cords)
         x, y = paste_cords
         paste_cords = ((test_img.width + x), y)
+        processed_files += 1
 
+    print(processed_files)
     sprite_path = os.path.join(dir_path, 'sprite_sheet.png')
-    blank_image.save(sprite_path)
+    if processed_files:
+        blank_image.save(sprite_path)
     return sprite_path
 
 def walk_tiffs(root):
     walkable = os.walk(root)
     for dir_path, dir_names, filenames in walkable:
+        if 'sprite_sheet.png' in filenames:
+            continue
+
         tiff_files = [
             filename for filename in filenames if filename.lower().endswith('tif') or filename.lower().endswith('tiff')
         ]
@@ -74,7 +90,6 @@ def walk_tiffs(root):
 
         files = process_files(dir_path, tiff_files)
         print(files)
-
 
 if __name__ == '__main__':
     _, root = argv
