@@ -25,6 +25,8 @@ def status(root, **kwargs):
         f.write(dumps(kwargs))
 
 def walk_and_clean(walking_root):
+    '''returns dict of relevant media paths'''
+    file_locs = {} # 'stackname' : [filepaths]
     ROOT = str(uuid4())
     files_written = 0
     new_root = os.path.join(walking_root, ROOT)
@@ -57,17 +59,22 @@ def walk_and_clean(walking_root):
             curr_dir = 'extra_data'
         else:
             curr_dir = os.path.dirname(dir_path).split('/')[-1]
+            # init empty list for curr tiff dir
 
         new_path = os.path.join(specimen_path, curr_dir)
         existing_path =  make_unless_exists(new_path)
-
+        
         if not existing_path:
             new_path = os.path.join(specimen_path, str(uuid4()) + curr_dir)
             make_unless_exists(new_path)
 
+        # add dir to dict
+        file_locs[new_path] = []
+
         for files in movable_files:
             old_files_path = os.path.join(dir_path, files)
             new_files_path = os.path.join(new_path, files)
+            file_locs[new_path].append(files)
             copy2(old_files_path, new_files_path)
             files_written += 1
             status(new_root,
@@ -81,10 +88,11 @@ def walk_and_clean(walking_root):
         state='finished',
         files_written=files_written
     )
+    return file_locs
 
 
 
 if __name__ == '__main__':
     _, root = argv
-    walk_and_clean(root)
+    print(walk_and_clean(root))
 
