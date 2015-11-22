@@ -1,6 +1,9 @@
 import sys,os
 #import piexif
 #from PIL import Image
+from uuid import uuid4
+import piexif
+from PIL import Image
 
 # walk through each directory of files,
 # if there are more than 50 files,
@@ -20,5 +23,4 @@ def clean_tiff(tiff):
         #new_tiff.save(tiff, exif=e)
 
     call('convert {0} -resize 640x480 -gravity center -background white -extent 640x480 {1}'.format(tiff, new_name(tiff)))
-
 
