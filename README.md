@@ -1,6 +1,12 @@
 Pyard Bone Scripts
 ------------------
 
+### Data ingest solution for [Boneyard.io](http://boneyard.io)
+
+### [Presentation](https://docs.google.com/presentation/d/180hNyxObl0PP7tZU3B3jl8ClTXZkziY7YOfmmdX-dh8/edit?usp=sharing)
+
+
+
 A list of scripts for cleaning up the data for the Bone Explorer
 data.
 
@@ -20,12 +26,9 @@ Dependencies:
 
 TODO
 
-- [] STL upload script
-  - [] find out why polling requests on sketchfab_upload doesn't update
-  - [] upload and dump link info to json to be picked up on metadata script
+- [x] STL upload script
 
 - [x] catdoc 
  
-- [x] WHY THE HECK CLEAN_DATA CAN'T POINT TO EXT PATH????
 
 
