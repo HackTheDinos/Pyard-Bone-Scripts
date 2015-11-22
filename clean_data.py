@@ -17,7 +17,11 @@ def make_unless_exists(path):
 
 def is_eligable_file(f):
     f = f.lower()
-    return f.endswith('tif') or f.endswith('tiff') or f.endswith('stl') or f.endswith('pca')
+    return f.endswith('tif') or f.endswith('tiff') or f.endswith('stl') or f.endswith('pca') or f.endswith('doc') or f.endswith('txt')
+
+def is_metadata_file(f):
+    f = f.lower()
+    return f.lower().endswith('stl') or f.lower().endswith('pca') or f.endswith('doc') or f.endswith('txt')
 
 def is_tiff_stack(path):
     files = [file for file in os.listdir(path)]
@@ -43,7 +47,7 @@ def walk_and_clean(walking_root):
     )
 
     walkable = os.walk(walking_root)
-    # root_depth = len(root.split('/'))
+    root_depth = len(root.split('/'))
     for dir_path, dir_names, filenames in walkable:
         if ROOT in dir_path:
             continue
@@ -55,15 +59,17 @@ def walk_and_clean(walking_root):
         if not movable_files:
             continue
 
-        # specimen_name = dir_path.split('/')[root_depth]
-        specimen_name = os.path.basename(dir_path)
-        specimen_path = os.path.join(new_root, specimen_name)
-        make_unless_exists(specimen_path)
+        specimen_name = dir_path.split('/')[root_depth]
 
-        if all([filename.lower().endswith('stl') or filename.lower().endswith('pca') for filename in movable_files]):
+        specimen_path = os.path.join(new_root, specimen_name)
+
+        if make_unless_exists(specimen_path):
+            print(specimen_path)
+
+        if all([is_metadata_file(filename) for filename in movable_files]):
             curr_dir = 'extra_data'
         else:
-            curr_dir = os.path.dirname(dir_path).split('/')[-1]
+            curr_dir = dir_path.split('/')[root_depth + 1]
 
 
         new_path = os.path.join(specimen_path, curr_dir)
@@ -71,6 +77,7 @@ def walk_and_clean(walking_root):
 
         if not existing_path:
             new_path = os.path.join(specimen_path, str(uuid4()) + curr_dir)
+            print(new_path)
             make_unless_exists(new_path)
 
         for files in movable_files:
