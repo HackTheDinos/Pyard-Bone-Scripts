@@ -15,16 +15,16 @@ def new_name(old_name):
 
 def clean_tiff(path, tiff):
     exif_dict = piexif.load(tiff)
-    exif_dict['ImageDescription'] = 'This is not null'
+    if not exif_dict.get('ImageDescription'):
+        exif_dict['ImageDescription'] = 'This is not null'
+
     new_tiff = Image.open(tiff)
     new_tiff_path = os.path.join(path, tiff)
     new_tiff.save(new_tiff_path, exif=e)
     new_png_name = new_name(tiff)
     new_png_path = os.path.join(path, new_png_name)
     call('convert {0} --type Grayscale {1}'.format(new_tiff_path, new_png_path))
-
-def shrink_tiff(path, tiff):
-    pass
+    return new_png_path
 
 ### GETTING THE DATA
 def process_files(dir_path, filenames):
@@ -34,9 +34,23 @@ def process_files(dir_path, filenames):
 
     step = ceil(total_files / MAX_FILE_COUNT)
     chosen_files = filenames[::step]
+    test_img = Image.open(chosen_files)
+
+    width = test_img.width * len(chosen_files)
+    height = test_img.height
+    blank_image = Image.new("RGB", (width, height))
+    paste_cords = (0, 0) # X, Y
+
     for filename in chosen_files:
-        shrink_tiff(dir_path, filename)
-    return chosen_files
+        png_path = clean_tiff(dir_path, filename)
+        png = Image.open(png_path)
+        blank_image.paste(png, paste_cords)
+        x, y = paste_cords
+        paste_cords = ((test_img.width + x), y)
+
+    sprite_path = os.path.join(dir_path, 'sprite_sheet.png')
+    blank_image.save(sprite_path)
+    return sprite_path
 
 def walk_tiffs(root):
     walkable = os.walk(root)
