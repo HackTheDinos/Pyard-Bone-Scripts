@@ -14,6 +14,10 @@ def make_unless_exists(path):
         return True
     return False
 
+def is_eligable_file(f):
+    f = f.lower()
+    return f.endswith('tif') or f.endswith('tiff') or f.endswith('stl')
+
 def walk_and_clean(walking_root):
     walkable = os.walk(root)
     ROOT = str(uuid4())
@@ -25,19 +29,22 @@ def walk_and_clean(walking_root):
         if dir_path.endswith(ROOT + '/'):
             continue
 
-        tiff_files = [
-            tiff for tiff in filenames if tiff.lower().endswith('tif') or tiff.lower().endswith('tiff')
+        movable_files = [
+            filename for filename in filenames if is_eligable_file(filename)
         ]
 
-        if not tiff_files:
+        if not movable_files:
             continue
 
         specimen_name = dir_path.split('/')[root_depth]
-
         specimen_path = os.path.join(new_root, specimen_name)
         make_unless_exists(specimen_path)
 
-        curr_dir = os.path.dirname(dir_path).split('/')[-1]
+        if all([filename.lower().endswith('stl') for filename in movable_files]):
+            curr_dir = 'STL_data'
+        else:
+            curr_dir = os.path.dirname(dir_path).split('/')[-1]
+
         new_path = os.path.join(specimen_path, curr_dir)
         existing_path =  make_unless_exists(new_path)
 
@@ -45,10 +52,11 @@ def walk_and_clean(walking_root):
             new_path = os.path.join(specimen_path, str(uuid4()) + curr_dir)
             make_unless_exists(new_path)
 
-        for tiff in tiff_files:
-            old_tiff_path = os.path.join(dir_path, tiff)
-            new_tiff_path = os.path.join(new_path, tiff)
-            copy2(old_tiff_path, new_tiff_path)
+        for files in movable_files:
+            old_files_path = os.path.join(dir_path, files)
+            new_files_path = os.path.join(new_path, files)
+            copy2(old_files_path, new_files_path)
+
 
 if __name__ == '__main__':
     _, root = argv
