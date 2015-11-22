@@ -21,10 +21,11 @@ Dependencies:
 TODO
 
 - [] STL upload script
+
   - [] find out why polling requests on sketchfab_upload doesn't update
 
 - [x] catdoc 
  
-- [x] WHY THE FUCK CLEAN_DATA CAN'T POINT TO EXT PATH????
+- [x] WHY THE HECK CLEAN_DATA CAN'T POINT TO EXT PATH????
 
 

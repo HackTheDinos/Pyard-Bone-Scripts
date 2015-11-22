@@ -46,7 +46,7 @@ def get_all_metadata(root_dir):
         all_data.update(xdoc)
 
     # get tiff stack urls
-    tiff_locs = find_tiff_stacks(root_dir)   
+    tiff_locs = find_tiff_stacks(root_dir)
     all_data.update({'scans':tiff_locs})
 
     resp = requests.post(ENDPOINT, data=all_data)
