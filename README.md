@@ -6,6 +6,7 @@ data.
 
 * `stlremesh.py` Uses meshlab server to filter stls
 * `clean_data.py` Will pull nested directories into a flat/consistent structure
+* `scrape_pca` Will return desired values form PCA in dict
 
 Dependencies:
 
@@ -14,3 +15,5 @@ Dependencies:
 * imagemagick
 * meshlab server
 * python-3.X
+
+
