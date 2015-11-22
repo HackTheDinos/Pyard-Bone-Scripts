@@ -19,6 +19,6 @@ def clean_tiff(tiff):
        # tiff = 'temp.tiff'
         #new_tiff.save(tiff, exif=e)
 
-    call('convert {0} -size 320x240 {1}'.format(tiff, new_name(tiff)))
+    call('convert {0} -resize 640x480 -gravity center -background white -extent 640x480 {1}'.format(tiff, new_name(tiff)))
 
 
