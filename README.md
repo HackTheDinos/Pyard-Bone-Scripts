@@ -20,14 +20,11 @@ Dependencies:
 
 TODO
 
-- [] find out why polling requests on sketchfab_upload doesn't update
-
-- [] add PCA data extraction to clean_file
- 
 - [] STL upload script
+  - [] find out why polling requests on sketchfab_upload doesn't update
+
+- [x] catdoc 
  
-- [] catdoc @nharsch  
- 
-- [] WHY THE FUCK CLEAN_DATA CAN'T POINT TO EXT PATH????
+- [x] WHY THE FUCK CLEAN_DATA CAN'T POINT TO EXT PATH????
 
 
