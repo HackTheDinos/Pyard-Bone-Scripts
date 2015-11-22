@@ -43,7 +43,7 @@ def walk_and_clean(walking_root):
     )
 
     walkable = os.walk(walking_root)
-    root_depth = len(root.split('/'))
+    # root_depth = len(root.split('/'))
     for dir_path, dir_names, filenames in walkable:
         if ROOT in dir_path:
             continue
@@ -55,7 +55,8 @@ def walk_and_clean(walking_root):
         if not movable_files:
             continue
 
-        specimen_name = dir_path.split('/')[root_depth]
+        # specimen_name = dir_path.split('/')[root_depth]
+        specimen_name = os.path.basename(dir_path)
         specimen_path = os.path.join(new_root, specimen_name)
         make_unless_exists(specimen_path)
 
