@@ -8,6 +8,7 @@ data.
 * `clean_data.py` Will pull nested directories into a flat/consistent structure
 * `scrape_pca` Will return desired values form PCA in dict
 * `extract_metadata` Will return all the metadata extracted from plain text
+* `sketchfab_upload` Will upload STL to sketchfab and return URL info
 
 Dependencies:
 
