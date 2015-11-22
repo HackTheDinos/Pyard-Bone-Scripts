@@ -26,7 +26,7 @@ def walk_and_clean(walking_root):
     root_depth = len(root.split('/'))
 
     for dir_path, dir_names, filenames in walkable:
-        if dir_path.endswith(ROOT + '/'):
+        if ROOT in dir_path:
             continue
 
         movable_files = [
