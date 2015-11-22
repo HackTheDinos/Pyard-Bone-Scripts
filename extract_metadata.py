@@ -16,12 +16,12 @@ def find_first_ext_match(ext, root_dir):
         for filename in files:
             if os.path.splitext(filename)[1].lower() == ext.lower():
                 return os.path.join(root, filename)
-     
+
 def find_filename(name, path):
     for root, dirs, files in os.walk(path):
         if name.lower() in (filename.lower() for filename in files):
             return os.path.join(root, name)
-        
+
 def get_all_metadata(root_dir):
     '''
     tries to scrape metadata from:
@@ -35,7 +35,7 @@ def get_all_metadata(root_dir):
         id= 'None found'
     all_data = {'institutional_id':id}
     pca_file = find_first_ext_match('.pca', root_dir)
-    pca_data = get_pca_dict(pca_file) 
+    pca_data = get_pca_dict(pca_file)
 
     if pca_data:
         all_data.update(pca_data)
@@ -44,7 +44,7 @@ def get_all_metadata(root_dir):
     if xdoc:
         all_data.update(xdoc)
 
-    resp = requests.post(ENDPOINT, data=pca_data)
+    resp = requests.post(ENDPOINT, data=all_data)
     return all_data
 
 if __name__ == "__main__":
@@ -54,7 +54,7 @@ if __name__ == "__main__":
     else:
         root_dir = '.'
     print(get_all_metadata(root_dir))
-    
 
-    
-    
+
+
+
